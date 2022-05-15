@@ -10,8 +10,18 @@ const weatherApi = (() => {
     return data;
   }
 
+  async function getWeatherData({ lat, lon }, units) {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=${units}&exclude=minutely&appid=${apiKey}`,
+    );
+    const data = await response.json();
+
+    return data;
+  }
+
   return {
     getCityCoordinates,
+    getWeatherData,
   };
 })();
 
