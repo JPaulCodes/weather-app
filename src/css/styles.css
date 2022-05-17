@@ -66,6 +66,12 @@ main {
   text-align: center;
 }
 
+.hourly-container > * {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
 footer {
   background-color: #a1a1aa;
   min-height: 50px;

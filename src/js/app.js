@@ -172,9 +172,52 @@ const dailyWeatherDisplay = {
   },
 };
 
+const hourlyWeatherDisplay = {
+  async init() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.cacheDom();
+    this.renderWeatherData();
+  },
+
+  cacheDom() {
+    this.hourlyContainerOne = document.querySelector('.container-one');
+    this.hourlyContainerTwo = document.querySelector('.container-two');
+    this.hourlyContainerThree = document.querySelector('.container-three');
+  },
+
+  renderWeatherData() {
+    const { weatherData } = this.data;
+    const hourlyData = weatherData.hourly.slice(1, 25);
+    const utcOffset = new Date().getTimezoneOffset() * 60;
+    const timezoneOffset = weatherData.timezone_offset;
+    const tempUnits = this.units === 'metric' ? '°C' : '°F';
+    const elements = [];
+
+    hourlyData.forEach((hour) => {
+      const time = new Date((hour.dt + timezoneOffset + utcOffset) * 1000);
+      const formattedTime = format(time, 'h:mmaaa');
+      const element = createElementFromHtml(`
+        <div class="hourly-weather">
+          <div class="time">${formattedTime}</div>
+          <div class="hourly-temperature">${Math.round(hour.temp)}${tempUnits}</div>
+          <div class="hourly-weather-icon">Icon</div>
+        </div>
+      `);
+
+      elements.push(element);
+    });
+
+    this.hourlyContainerOne.append(...elements.slice(0, 8));
+    this.hourlyContainerTwo.append(...elements.slice(8, 16));
+    this.hourlyContainerThree.append(...elements.slice(16, 24));
+  },
+};
+
 (() => {
   cityTimeDisplay.init();
   leftWeatherDisplay.init();
   rightWeatherDisplay.init();
   dailyWeatherDisplay.init();
+  hourlyWeatherDisplay.init();
 })();
