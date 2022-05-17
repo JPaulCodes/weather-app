@@ -214,10 +214,44 @@ const hourlyWeatherDisplay = {
   },
 };
 
+const dailyHourlyControls = {
+  init() {
+    this.cacheDom();
+    this.bindUiEvents();
+  },
+
+  cacheDom() {
+    this.dailyButton = document.querySelector('.daily-button');
+    this.hourlyButton = document.querySelector('.hourly-button');
+    this.dailyContainer = document.querySelector('.daily-container');
+    this.hourlyContainer = document.querySelector('.hourly-container');
+  },
+
+  bindUiEvents() {
+    this.dailyButton.addEventListener('click', () => {
+      this.setDailyActive();
+    });
+    this.hourlyButton.addEventListener('click', () => {
+      this.setHourlyActive();
+    });
+  },
+
+  setDailyActive() {
+    this.hourlyContainer.classList.remove('active');
+    this.dailyContainer.classList.add('active');
+  },
+
+  setHourlyActive() {
+    this.dailyContainer.classList.remove('active');
+    this.hourlyContainer.classList.add('active');
+  },
+};
+
 (() => {
   cityTimeDisplay.init();
   leftWeatherDisplay.init();
   rightWeatherDisplay.init();
   dailyWeatherDisplay.init();
   hourlyWeatherDisplay.init();
+  dailyHourlyControls.init();
 })();

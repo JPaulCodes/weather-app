@@ -56,20 +56,37 @@ main {
 }
 
 .bottom-display {
+  display: grid;
   margin-top: auto;
   width: 100%;
 }
 
+.daily-hourly-selector {
+  justify-self: center;
+}
+
 .daily-container {
-  display: flex;
+  display: none;
   justify-content: space-between;
   text-align: center;
+}
+
+.hourly-container {
+  display: none;
 }
 
 .hourly-container > * {
   display: flex;
   justify-content: space-between;
   text-align: center;
+}
+
+.daily-container.active {
+  display: flex;
+}
+
+.hourly-container.active {
+  display: block;
 }
 
 footer {
