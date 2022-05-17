@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, roundToNearestMinutes } from 'date-fns';
 import { weatherApi, getWindDescription } from './utilities';
 
 const weatherForecast = (() => {
@@ -76,9 +76,9 @@ const leftWeatherDisplay = {
 
   renderWeatherData() {
     const { weatherData } = this.data;
-    const tempUnits = this.units === 'metric' ? '°C' : '°F';
     const windSpeed = weatherData.current.wind_speed;
     const windDescription = getWindDescription(windSpeed, this.units);
+    const tempUnits = this.units === 'metric' ? '°C' : '°F';
 
     this.temperatureNow.innerText = `${Math.round(weatherData.current.temp)}${tempUnits}`;
     this.weatherNow.innerText = weatherData.current.weather[0].description;
@@ -89,7 +89,56 @@ const leftWeatherDisplay = {
   },
 };
 
+const rightWeatherDisplay = {
+  async init() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.cacheDom();
+    this.renderWeatherData();
+  },
+
+  cacheDom() {
+    this.windSpeed = document.querySelector('.wind-speed');
+    this.humidity = document.querySelector('.humidity');
+    this.uvIndex = document.querySelector('.uv-index');
+    this.chanceOfRain = document.querySelector('.chance-of-rain');
+    this.visibility = document.querySelector('.visibility');
+    this.cloudiness = document.querySelector('.cloudiness');
+    this.sunrise = document.querySelector('.sunrise');
+    this.sunset = document.querySelector('.sunset');
+    this.pressure = document.querySelector('.pressure');
+  },
+
+  renderWeatherData() {
+    const { weatherData } = this.data;
+    const { sunrise, sunset } = weatherData.current;
+    const timezoneOffset = weatherData.timezone_offset;
+    const sunriseTime = this.getSunriseSunset(sunrise, timezoneOffset);
+    const sunsetTime = this.getSunriseSunset(sunset, timezoneOffset);
+    const speedUnits = this.units === 'metric' ? 'm/s' : 'mph';
+
+    this.windSpeed.innerText = `${weatherData.current.wind_speed.toFixed(1)}${speedUnits}`;
+    this.humidity.innerText = `${weatherData.current.humidity}%`;
+    this.uvIndex.innerText = `${Math.round(weatherData.current.uvi)}`;
+    this.chanceOfRain.innerText = `${weatherData.daily[0].pop * 100}%`;
+    this.visibility.innerText = `${weatherData.current.visibility}m`;
+    this.cloudiness.innerText = `${weatherData.current.clouds}%`;
+    this.sunrise.innerText = sunriseTime;
+    this.sunset.innerText = sunsetTime;
+    this.pressure.innerText = `${weatherData.current.pressure}hPa`;
+  },
+
+  getSunriseSunset(unixTime, timezoneOffset) {
+    const utcOffset = new Date().getTimezoneOffset() * 60;
+    const time = new Date((unixTime + timezoneOffset + utcOffset) * 1000);
+    const formattedTime = format(roundToNearestMinutes(time), 'h:mmaaa');
+
+    return formattedTime;
+  },
+};
+
 (() => {
   cityTimeDisplay.init();
   leftWeatherDisplay.init();
+  rightWeatherDisplay.init();
 })();
