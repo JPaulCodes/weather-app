@@ -1,5 +1,5 @@
 import { format, roundToNearestMinutes } from 'date-fns';
-import { weatherApi, getWindDescription } from './utilities';
+import { weatherApi, getWindDescription, createElementFromHtml } from './utilities';
 
 const weatherForecast = (() => {
   let currentCity = 'london';
@@ -137,8 +137,44 @@ const rightWeatherDisplay = {
   },
 };
 
+const dailyWeatherDisplay = {
+  async init() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.cacheDom();
+    this.renderWeatherData();
+  },
+
+  cacheDom() {
+    this.dailyContainer = document.querySelector('.daily-container');
+  },
+
+  renderWeatherData() {
+    const { weatherData } = this.data;
+    const dailyData = weatherData.daily.slice(1, -1);
+    const utcOffset = new Date().getTimezoneOffset() * 60;
+    const timezoneOffset = weatherData.timezone_offset;
+    const tempUnits = this.units === 'metric' ? '°C' : '°F';
+
+    dailyData.forEach((day) => {
+      const date = new Date((day.dt + timezoneOffset + utcOffset) * 1000);
+      const formattedDate = format(date, 'EEEE');
+      const element = createElementFromHtml(`
+        <div class="daily-weather">
+          <div class="day">${formattedDate}</div>
+          <div class="highs">${Math.round(day.temp.max)}${tempUnits}</div>
+          <div class="lows">${Math.round(day.temp.min)}${tempUnits}</div>
+        </div>
+      `);
+
+      this.dailyContainer.appendChild(element);
+    });
+  },
+};
+
 (() => {
   cityTimeDisplay.init();
   leftWeatherDisplay.init();
   rightWeatherDisplay.init();
+  dailyWeatherDisplay.init();
 })();
