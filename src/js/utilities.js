@@ -1,18 +1,20 @@
 const weatherApi = (() => {
-  const apiKey = '45ad5a2ec30a3a75a85bd6b599d588fb';
+  const API_KEY = '45ad5a2ec30a3a75a85bd6b599d588fb';
 
+  // Gets latitude and longitude
   async function getCityCoordinates(cityName) {
     const response = await fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`,
+      `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`,
     );
     const data = await response.json();
 
     return data;
   }
 
+  // Retrieves weather data based on latitude / longitude
   async function getWeatherData({ lat, lon }, units) {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=${units}&exclude=minutely&appid=${apiKey}`,
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=${units}&exclude=minutely&appid=${API_KEY}`,
     );
     const data = await response.json();
 
@@ -25,13 +27,7 @@ const weatherApi = (() => {
   };
 })();
 
-function createElementFromHtml(htmlString) {
-  const template = document.createElement('template');
-  template.innerHTML = htmlString.trim();
-
-  return template.content.firstElementChild;
-}
-
+// Descriptions taken from the Beaufort scale
 function getWindDescription(windSpeed, units) {
   let windDescription = '';
   let ms = 0;
@@ -68,6 +64,13 @@ function getWindDescription(windSpeed, units) {
   }
 
   return windDescription;
+}
+
+function createElementFromHtml(htmlString) {
+  const template = document.createElement('template');
+  template.innerHTML = htmlString.trim();
+
+  return template.content.firstElementChild;
 }
 
 export { weatherApi, createElementFromHtml, getWindDescription };
