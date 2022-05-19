@@ -64,7 +64,7 @@ main {
   width: 100%;
 }
 
-.daily-hourly-selector {
+.daily-hourly-controls {
   justify-self: center;
 }
 
@@ -74,11 +74,11 @@ main {
   text-align: center;
 }
 
-.hourly-container {
+.outer-hourly-container {
   display: none;
 }
 
-.hourly-container > * {
+.outer-hourly-container > * {
   display: flex;
   justify-content: space-between;
   text-align: center;
@@ -88,7 +88,7 @@ main {
   display: flex;
 }
 
-.hourly-container.active {
+.outer-hourly-container.active {
   display: block;
 }
 

@@ -181,9 +181,9 @@ const hourlyWeatherDisplay = {
   },
 
   cacheDom() {
-    this.hourlyContainerOne = document.querySelector('.container-one');
-    this.hourlyContainerTwo = document.querySelector('.container-two');
-    this.hourlyContainerThree = document.querySelector('.container-three');
+    this.hourlyContainerOne = document.querySelector('.hourly-container-one');
+    this.hourlyContainerTwo = document.querySelector('.hourly-container-two');
+    this.hourlyContainerThree = document.querySelector('.hourly-container-three');
   },
 
   renderWeatherData() {
@@ -217,17 +217,17 @@ const hourlyWeatherDisplay = {
 const dailyHourlyControls = {
   init() {
     this.cacheDom();
-    this.bindUiEvents();
+    this.bindEvents();
   },
 
   cacheDom() {
     this.dailyButton = document.querySelector('.daily-button');
     this.hourlyButton = document.querySelector('.hourly-button');
     this.dailyContainer = document.querySelector('.daily-container');
-    this.hourlyContainer = document.querySelector('.hourly-container');
+    this.outerHourlyContainer = document.querySelector('.outer-hourly-container');
   },
 
-  bindUiEvents() {
+  bindEvents() {
     this.dailyButton.addEventListener('click', () => {
       this.setDailyActive();
     });
@@ -237,13 +237,13 @@ const dailyHourlyControls = {
   },
 
   setDailyActive() {
-    this.hourlyContainer.classList.remove('active');
+    this.outerHourlyContainer.classList.remove('active');
     this.dailyContainer.classList.add('active');
   },
 
   setHourlyActive() {
     this.dailyContainer.classList.remove('active');
-    this.hourlyContainer.classList.add('active');
+    this.outerHourlyContainer.classList.add('active');
   },
 };
 
