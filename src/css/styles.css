@@ -62,28 +62,42 @@ main {
   margin-top: auto;
 }
 
+.hours-display-controls {
+  display: none;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.change-displayed-hours.index {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 13px;
+}
+
 .bottom-display {
   width: 100%;
 }
 
-.daily-container {
+.daily-forecast-container {
   display: none;
   justify-content: space-between;
   text-align: center;
 }
 
-.outer-hourly-container {
+.hourly-forecast-container {
   display: none;
 }
 
-.outer-hourly-container > * {
+.hourly-forecast-container > * {
   display: none;
   justify-content: space-between;
   text-align: center;
-}
-
-[class*='active'] {
   flex: 1;
+}
+
+.active {
   display: flex;
 }
 

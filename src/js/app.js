@@ -146,7 +146,7 @@ const dailyWeatherDisplay = {
   },
 
   cacheDom() {
-    this.dailyContainer = document.querySelector('.daily-container');
+    this.dailyForecastContainer = document.querySelector('.daily-forecast-container');
   },
 
   renderWeatherData() {
@@ -167,7 +167,7 @@ const dailyWeatherDisplay = {
         </div>
       `);
 
-      this.dailyContainer.appendChild(element);
+      this.dailyForecastContainer.appendChild(element);
     });
   },
 };
@@ -221,29 +221,66 @@ const dailyHourlyControls = {
   },
 
   cacheDom() {
-    this.dailyButton = document.querySelector('.daily-button');
-    this.hourlyButton = document.querySelector('.hourly-button');
-    this.dailyContainer = document.querySelector('.daily-container');
-    this.outerHourlyContainer = document.querySelector('.outer-hourly-container');
+    this.dailyForecastButton = document.querySelector('.daily-forecast-button');
+    this.hourlyForecastButton = document.querySelector('.hourly-forecast-button');
+    this.hoursDisplayControls = document.querySelector('.hours-display-controls');
+    this.dailyForecastContainer = document.querySelector('.daily-forecast-container');
+    this.hourlyForecastContainer = document.querySelector('.hourly-forecast-container');
   },
 
   bindEvents() {
-    this.dailyButton.addEventListener('click', () => {
-      this.setDailyActive();
+    this.dailyForecastButton.addEventListener('click', () => {
+      this.setDailyForecastActive();
     });
-    this.hourlyButton.addEventListener('click', () => {
-      this.setHourlyActive();
+    this.hourlyForecastButton.addEventListener('click', () => {
+      this.setHourlyForecastActive();
     });
   },
 
-  setDailyActive() {
-    this.outerHourlyContainer.classList.remove('active');
-    this.dailyContainer.classList.add('active');
+  setDailyForecastActive() {
+    this.hourlyForecastContainer.classList.remove('active');
+    this.hoursDisplayControls.classList.remove('active');
+    this.dailyForecastContainer.classList.add('active');
   },
 
-  setHourlyActive() {
-    this.dailyContainer.classList.remove('active');
-    this.outerHourlyContainer.classList.add('active');
+  setHourlyForecastActive() {
+    this.dailyForecastContainer.classList.remove('active');
+    this.hourlyForecastContainer.classList.add('active');
+    this.hoursDisplayControls.classList.add('active');
+  },
+};
+
+const hoursDisplayControls = {
+  init() {
+    this.index = 0;
+    this.cacheDom();
+    this.bindEvents();
+  },
+
+  cacheDom() {
+    this.hourlyForecastContainers = document.querySelectorAll('[class^="hourly-container"]');
+    this.navigationButtons = document.querySelectorAll('.change-displayed-hours');
+  },
+
+  bindEvents() {
+    this.navigationButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        this.changeDisplayedHours(event);
+      });
+    });
+  },
+
+  changeDisplayedHours(event) {
+    if (event.target.classList.contains('index')) {
+      this.index = Number(event.target.dataset.index);
+    } else if (event.target.classList.contains('left') && this.index > 0) {
+      this.index -= 1;
+    } else if (event.target.classList.contains('right') && this.index < 2) {
+      this.index += 1;
+    }
+
+    this.hourlyForecastContainers.forEach((container) => container.classList.remove('active'));
+    this.hourlyForecastContainers[this.index].classList.add('active');
   },
 };
 
@@ -254,4 +291,5 @@ const dailyHourlyControls = {
   dailyWeatherDisplay.init();
   hourlyWeatherDisplay.init();
   dailyHourlyControls.init();
+  hoursDisplayControls.init();
 })();
