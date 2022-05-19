@@ -58,14 +58,12 @@ main {
   grid-template-columns: repeat(3, 100px);
 }
 
-.bottom-display {
-  display: grid;
+.daily-hourly-controls {
   margin-top: auto;
-  width: 100%;
 }
 
-.daily-hourly-controls {
-  justify-self: center;
+.bottom-display {
+  width: 100%;
 }
 
 .daily-container {
@@ -79,17 +77,14 @@ main {
 }
 
 .outer-hourly-container > * {
-  display: flex;
+  display: none;
   justify-content: space-between;
   text-align: center;
 }
 
-.daily-container.active {
+[class*='active'] {
+  flex: 1;
   display: flex;
-}
-
-.outer-hourly-container.active {
-  display: block;
 }
 
 footer {
