@@ -57,6 +57,11 @@ const cityTimeDisplay = {
 
     return formattedTime;
   },
+
+  async updateUnits() {
+    this.data = await weatherForecast.getData();
+    this.renderCityTimeData();
+  },
 };
 
 const leftWeatherDisplay = {
@@ -86,6 +91,12 @@ const leftWeatherDisplay = {
       weatherData.current.feels_like,
     )}${tempUnits}`;
     this.windNow.innerText = windDescription;
+  },
+
+  async updateUnits() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.renderWeatherData();
   },
 };
 
@@ -135,6 +146,12 @@ const rightWeatherDisplay = {
 
     return formattedTime;
   },
+
+  async updateUnits() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.renderWeatherData();
+  },
 };
 
 const dailyWeatherDisplay = {
@@ -169,6 +186,13 @@ const dailyWeatherDisplay = {
 
       this.dailyForecastContainer.appendChild(element);
     });
+  },
+
+  async updateUnits() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.dailyForecastContainer.replaceChildren();
+    this.renderWeatherData();
   },
 };
 
@@ -211,6 +235,15 @@ const hourlyWeatherDisplay = {
     this.hourlyContainerOne.append(...elements.slice(0, 8));
     this.hourlyContainerTwo.append(...elements.slice(8, 16));
     this.hourlyContainerThree.append(...elements.slice(16, 24));
+  },
+
+  async updateUnits() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
+    this.hourlyContainerOne.replaceChildren();
+    this.hourlyContainerTwo.replaceChildren();
+    this.hourlyContainerThree.replaceChildren();
+    this.renderWeatherData();
   },
 };
 
@@ -284,6 +317,41 @@ const hoursDisplayControls = {
   },
 };
 
+const metricImperialControls = {
+  async init() {
+    this.cacheDom();
+    this.bindEvents();
+  },
+
+  cacheDom() {
+    this.displayMetricButton = document.querySelector('.display-metric-button');
+    this.displayImperialButton = document.querySelector('.display-imperial-button');
+  },
+
+  bindEvents() {
+    this.displayMetricButton.addEventListener('click', () => {
+      if (weatherForecast.getUnits() === 'imperial') {
+        weatherForecast.setUnits('metric');
+        this.updateAllUnits();
+      }
+    });
+    this.displayImperialButton.addEventListener('click', () => {
+      if (weatherForecast.getUnits() === 'metric') {
+        weatherForecast.setUnits('imperial');
+        this.updateAllUnits();
+      }
+    });
+  },
+
+  updateAllUnits() {
+    cityTimeDisplay.updateUnits();
+    leftWeatherDisplay.updateUnits();
+    rightWeatherDisplay.updateUnits();
+    dailyWeatherDisplay.updateUnits();
+    hourlyWeatherDisplay.updateUnits();
+  },
+};
+
 (() => {
   cityTimeDisplay.init();
   leftWeatherDisplay.init();
@@ -292,4 +360,5 @@ const hoursDisplayControls = {
   hourlyWeatherDisplay.init();
   dailyHourlyControls.init();
   hoursDisplayControls.init();
+  metricImperialControls.init();
 })();
