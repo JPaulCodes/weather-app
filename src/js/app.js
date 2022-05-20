@@ -1,6 +1,7 @@
 import { format, roundToNearestMinutes } from 'date-fns';
 import { weatherApi, getWindDescription, createElementFromHtml } from './utilities';
 
+// Handles fetching location specific weather data from OpenWeather
 const weatherForecast = (() => {
   let currentCity = 'london';
   let currentUnits = 'metric';
@@ -19,20 +20,25 @@ const weatherForecast = (() => {
     setUnits(units) {
       currentUnits = units;
     },
-    getData() {
-      return fetchAllData();
-    },
     getUnits() {
       return currentUnits;
+    },
+    getData() {
+      return fetchAllData();
     },
   };
 })();
 
+// Displays city name, country and local time
 const cityTimeDisplay = {
   async init() {
-    this.data = await weatherForecast.getData();
+    await this.getData();
     this.cacheDom();
     this.renderCityTimeData();
+  },
+
+  async getData() {
+    this.data = await weatherForecast.getData();
   },
 
   cacheDom() {
@@ -50,6 +56,7 @@ const cityTimeDisplay = {
     this.localTime.innerText = localTime;
   },
 
+  // Applies an offset to computer time to get UTC time, then converted to a locations local time
   calculateLocalTime(unixTime, timezoneOffset) {
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const time = new Date((unixTime + timezoneOffset + utcOffset) * 1000);
@@ -59,17 +66,22 @@ const cityTimeDisplay = {
   },
 
   async updateUnits() {
-    this.data = await weatherForecast.getData();
+    await this.getData();
     this.renderCityTimeData();
   },
 };
 
+// Handles left side of the main central display
 const leftWeatherDisplay = {
   async init() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.cacheDom();
     this.renderWeatherData();
+  },
+
+  async getData() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
   },
 
   cacheDom() {
@@ -94,18 +106,22 @@ const leftWeatherDisplay = {
   },
 
   async updateUnits() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.renderWeatherData();
   },
 };
 
+// Handles all other weather data which is shown on the right side of the main display
 const rightWeatherDisplay = {
   async init() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.cacheDom();
     this.renderWeatherData();
+  },
+
+  async getData() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
   },
 
   cacheDom() {
@@ -139,6 +155,7 @@ const rightWeatherDisplay = {
     this.pressure.innerText = `${weatherData.current.pressure}hPa`;
   },
 
+  // Applies an offset to computer time to get UTC time, then converted to a locations local time
   getSunriseSunset(unixTime, timezoneOffset) {
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const time = new Date((unixTime + timezoneOffset + utcOffset) * 1000);
@@ -148,18 +165,22 @@ const rightWeatherDisplay = {
   },
 
   async updateUnits() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.renderWeatherData();
   },
 };
 
+// Controls the bottom display which shows the weekly weather forecast
 const dailyWeatherDisplay = {
   async init() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.cacheDom();
     this.renderWeatherData();
+  },
+
+  async getData() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
   },
 
   cacheDom() {
@@ -169,6 +190,8 @@ const dailyWeatherDisplay = {
   renderWeatherData() {
     const { weatherData } = this.data;
     const dailyData = weatherData.daily.slice(1, -1);
+
+    // Timezone offset needs to be applied to get correct dates and times for a location
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const timezoneOffset = weatherData.timezone_offset;
     const tempUnits = this.units === 'metric' ? '°C' : '°F';
@@ -189,19 +212,23 @@ const dailyWeatherDisplay = {
   },
 
   async updateUnits() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.dailyForecastContainer.replaceChildren();
     this.renderWeatherData();
   },
 };
 
+// Handles the bottom display which shows weather forecast data by hour in 8hr blocks
 const hourlyWeatherDisplay = {
   async init() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.cacheDom();
     this.renderWeatherData();
+  },
+
+  async getData() {
+    this.data = await weatherForecast.getData();
+    this.units = weatherForecast.getUnits();
   },
 
   cacheDom() {
@@ -232,14 +259,14 @@ const hourlyWeatherDisplay = {
       elements.push(element);
     });
 
+    // 24hr block of time is split into three 8hr blocks
     this.hourlyContainerOne.append(...elements.slice(0, 8));
     this.hourlyContainerTwo.append(...elements.slice(8, 16));
     this.hourlyContainerThree.append(...elements.slice(16, 24));
   },
 
   async updateUnits() {
-    this.data = await weatherForecast.getData();
-    this.units = weatherForecast.getUnits();
+    await this.getData();
     this.hourlyContainerOne.replaceChildren();
     this.hourlyContainerTwo.replaceChildren();
     this.hourlyContainerThree.replaceChildren();
@@ -247,6 +274,7 @@ const hourlyWeatherDisplay = {
   },
 };
 
+// User controls that allow switching between weekly and hourly weather forecast
 const dailyHourlyControls = {
   init() {
     this.cacheDom();
@@ -283,6 +311,7 @@ const dailyHourlyControls = {
   },
 };
 
+// User controls that allow switching between hourly forecast data
 const hoursDisplayControls = {
   init() {
     this.index = 0;
@@ -291,7 +320,7 @@ const hoursDisplayControls = {
   },
 
   cacheDom() {
-    this.hourlyForecastContainers = document.querySelectorAll('[class^="hourly-container"]');
+    this.hourlyForecastContainers = document.querySelectorAll('.hourly-forecast-container > *');
     this.navigationButtons = document.querySelectorAll('.change-displayed-hours');
   },
 
@@ -303,12 +332,15 @@ const hoursDisplayControls = {
     });
   },
 
+  // Uses index of clicked buttons to display the corresponding time block
   changeDisplayedHours(event) {
-    if (event.target.classList.contains('index')) {
+    const { action } = event.target.dataset;
+
+    if (action === 'index') {
       this.index = Number(event.target.dataset.index);
-    } else if (event.target.classList.contains('left') && this.index > 0) {
+    } else if (action === 'left' && this.index > 0) {
       this.index -= 1;
-    } else if (event.target.classList.contains('right') && this.index < 2) {
+    } else if (action === 'right' && this.index < 2) {
       this.index += 1;
     }
 
@@ -317,6 +349,7 @@ const hoursDisplayControls = {
   },
 };
 
+// Handles changing the displayed units between metric and imperial
 const metricImperialControls = {
   async init() {
     this.cacheDom();
