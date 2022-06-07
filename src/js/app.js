@@ -65,7 +65,7 @@ const cityTimeDisplay = {
     return formattedTime;
   },
 
-  async updateUnits() {
+  async updateDisplay() {
     await this.getData();
     this.renderCityTimeData();
   },
@@ -105,7 +105,7 @@ const leftWeatherDisplay = {
     this.windNow.innerText = windDescription;
   },
 
-  async updateUnits() {
+  async updateDisplay() {
     await this.getData();
     this.renderWeatherData();
   },
@@ -164,7 +164,7 @@ const rightWeatherDisplay = {
     return formattedTime;
   },
 
-  async updateUnits() {
+  async updateDisplay() {
     await this.getData();
     this.renderWeatherData();
   },
@@ -211,7 +211,7 @@ const dailyWeatherDisplay = {
     });
   },
 
-  async updateUnits() {
+  async updateDisplay() {
     await this.getData();
     this.dailyForecastContainer.replaceChildren();
     this.renderWeatherData();
@@ -265,7 +265,7 @@ const hourlyWeatherDisplay = {
     this.hourlyContainerThree.append(...elements.slice(16, 24));
   },
 
-  async updateUnits() {
+  async updateDisplay() {
     await this.getData();
     this.hourlyContainerOne.replaceChildren();
     this.hourlyContainerTwo.replaceChildren();
@@ -349,6 +349,39 @@ const hoursDisplayControls = {
   },
 };
 
+const searchWeather = {
+  init() {
+    this.cacheDom();
+    this.bindEvents();
+  },
+
+  cacheDom() {
+    this.searchInput = document.querySelector('.search-input');
+    this.searchForm = document.querySelector('.search-form');
+  },
+
+  bindEvents() {
+    this.searchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.search();
+      this.updateAllDisplays();
+    });
+  },
+
+  search() {
+    const cityName = this.searchInput.value;
+    weatherForecast.setCity(cityName);
+  },
+
+  updateAllDisplays() {
+    cityTimeDisplay.updateDisplay();
+    leftWeatherDisplay.updateDisplay();
+    rightWeatherDisplay.updateDisplay();
+    dailyWeatherDisplay.updateDisplay();
+    hourlyWeatherDisplay.updateDisplay();
+  },
+};
+
 // Handles changing the displayed units between metric and imperial
 const metricImperialControls = {
   async init() {
@@ -365,23 +398,23 @@ const metricImperialControls = {
     this.displayMetricButton.addEventListener('click', () => {
       if (weatherForecast.getUnits() === 'imperial') {
         weatherForecast.setUnits('metric');
-        this.updateAllUnits();
+        this.updateUnits();
       }
     });
     this.displayImperialButton.addEventListener('click', () => {
       if (weatherForecast.getUnits() === 'metric') {
         weatherForecast.setUnits('imperial');
-        this.updateAllUnits();
+        this.updateUnits();
       }
     });
   },
 
-  updateAllUnits() {
-    cityTimeDisplay.updateUnits();
-    leftWeatherDisplay.updateUnits();
-    rightWeatherDisplay.updateUnits();
-    dailyWeatherDisplay.updateUnits();
-    hourlyWeatherDisplay.updateUnits();
+  updateUnits() {
+    cityTimeDisplay.updateDisplay();
+    leftWeatherDisplay.updateDisplay();
+    rightWeatherDisplay.updateDisplay();
+    dailyWeatherDisplay.updateDisplay();
+    hourlyWeatherDisplay.updateDisplay();
   },
 };
 
@@ -393,5 +426,6 @@ const metricImperialControls = {
   hourlyWeatherDisplay.init();
   dailyHourlyControls.init();
   hoursDisplayControls.init();
+  searchWeather.init();
   metricImperialControls.init();
 })();

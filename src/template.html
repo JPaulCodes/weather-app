@@ -18,7 +18,10 @@
         <p>App</p>
       </div>
     </div>
-    <input class="search-input" type="search">
+    <form class="search-form">
+      <label for="search" hidden>Search Input:</label>
+      <input id="search" class="search-input" type="search" required>
+    </form>
     <div class="display-units-controls">
       <button class="display-metric-button">°C, m/s</button>
       <button class="display-imperial-button">°F, mph</button>
