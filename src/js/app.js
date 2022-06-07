@@ -99,9 +99,7 @@ const leftWeatherDisplay = {
 
     this.temperatureNow.innerText = `${Math.round(weatherData.current.temp)}${tempUnits}`;
     this.weatherNow.innerText = weatherData.current.weather[0].description;
-    this.feelsLike.innerText = `Feels Like ${Math.round(
-      weatherData.current.feels_like,
-    )}${tempUnits}`;
+    this.feelsLike.innerText = `Feels Like ${Math.round(weatherData.current.feels_like)}${tempUnits}`;
     this.windNow.innerText = windDescription;
   },
 
@@ -265,11 +263,15 @@ const hourlyWeatherDisplay = {
     this.hourlyContainerThree.append(...elements.slice(16, 24));
   },
 
-  async updateDisplay() {
-    await this.getData();
+  emptyContainers() {
     this.hourlyContainerOne.replaceChildren();
     this.hourlyContainerTwo.replaceChildren();
     this.hourlyContainerThree.replaceChildren();
+  },
+
+  async updateDisplay() {
+    await this.getData();
+    this.emptyContainers();
     this.renderWeatherData();
   },
 };
@@ -326,25 +328,27 @@ const hoursDisplayControls = {
 
   bindEvents() {
     this.navigationButtons.forEach((button) => {
-      button.addEventListener('click', (event) => {
-        this.changeDisplayedHours(event);
+      button.addEventListener('click', (e) => {
+        this.changeDisplayedHours(e);
       });
     });
   },
 
   // Uses index of clicked buttons to display the corresponding time block
-  changeDisplayedHours(event) {
-    const { action } = event.target.dataset;
+  changeDisplayedHours(e) {
+    const { action } = e.target.dataset;
 
     if (action === 'index') {
-      this.index = Number(event.target.dataset.index);
+      this.index = Number(e.target.dataset.index);
     } else if (action === 'left' && this.index > 0) {
       this.index -= 1;
     } else if (action === 'right' && this.index < 2) {
       this.index += 1;
     }
 
-    this.hourlyForecastContainers.forEach((container) => container.classList.remove('active'));
+    this.hourlyForecastContainers.forEach((container) => {
+      container.classList.remove('active');
+    });
     this.hourlyForecastContainers[this.index].classList.add('active');
   },
 };
@@ -361,8 +365,8 @@ const searchWeather = {
   },
 
   bindEvents() {
-    this.searchForm.addEventListener('submit', (event) => {
-      event.preventDefault();
+    this.searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
       this.search();
       this.updateAllDisplays();
     });
@@ -387,6 +391,7 @@ const metricImperialControls = {
   async init() {
     this.cacheDom();
     this.bindEvents();
+    this.currentUnits = 'metric';
   },
 
   cacheDom() {
@@ -396,20 +401,22 @@ const metricImperialControls = {
 
   bindEvents() {
     this.displayMetricButton.addEventListener('click', () => {
-      if (weatherForecast.getUnits() === 'imperial') {
-        weatherForecast.setUnits('metric');
+      if (this.currentUnits === 'imperial') {
+        this.currentUnits = 'metric';
         this.updateUnits();
       }
     });
+
     this.displayImperialButton.addEventListener('click', () => {
-      if (weatherForecast.getUnits() === 'metric') {
-        weatherForecast.setUnits('imperial');
+      if (this.currentUnits === 'metric') {
+        this.currentUnits = 'imperial';
         this.updateUnits();
       }
     });
   },
 
   updateUnits() {
+    weatherForecast.setUnits(this.currentUnits);
     cityTimeDisplay.updateDisplay();
     leftWeatherDisplay.updateDisplay();
     rightWeatherDisplay.updateDisplay();

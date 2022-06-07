@@ -1,4 +1,4 @@
-const weatherApi = (() => {
+export const weatherApi = (() => {
   const API_KEY = '45ad5a2ec30a3a75a85bd6b599d588fb';
 
   // Gets latitude and longitude
@@ -27,8 +27,8 @@ const weatherApi = (() => {
   };
 })();
 
-// Descriptions taken from the Beaufort scale
-function getWindDescription(windSpeed, units) {
+// Wind descriptions taken from the Beaufort scale
+export function getWindDescription(windSpeed, units) {
   let windDescription = '';
   let ms = 0;
 
@@ -66,11 +66,9 @@ function getWindDescription(windSpeed, units) {
   return windDescription;
 }
 
-function createElementFromHtml(htmlString) {
+export function createElementFromHtml(htmlString) {
   const template = document.createElement('template');
   template.innerHTML = htmlString.trim();
 
   return template.content.firstElementChild;
 }
-
-export { weatherApi, createElementFromHtml, getWindDescription };
