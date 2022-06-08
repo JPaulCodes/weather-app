@@ -336,6 +336,9 @@ const hoursDisplayControls = {
 
   // Uses index of clicked buttons to display the corresponding time block
   changeDisplayedHours(e) {
+    this.clearActiveDot();
+    this.clearActiveContainer();
+
     const { action } = e.currentTarget.dataset;
 
     if (action === 'index') {
@@ -346,10 +349,20 @@ const hoursDisplayControls = {
       this.index += 1;
     }
 
+    this.navigationButtons[this.index + 1].classList.add('active-container-dot');
+    this.hourlyForecastContainers[this.index].classList.add('active');
+  },
+
+  clearActiveDot() {
+    this.navigationButtons.forEach((button) => {
+      button.classList.remove('active-container-dot');
+    });
+  },
+
+  clearActiveContainer() {
     this.hourlyForecastContainers.forEach((container) => {
       container.classList.remove('active');
     });
-    this.hourlyForecastContainers[this.index].classList.add('active');
   },
 };
 
