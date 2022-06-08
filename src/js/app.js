@@ -404,6 +404,8 @@ const metricImperialControls = {
       if (this.currentUnits === 'imperial') {
         this.currentUnits = 'metric';
         this.updateUnits();
+        this.displayMetricButton.classList.add('active-units');
+        this.displayImperialButton.classList.remove('active-units');
       }
     });
 
@@ -411,6 +413,8 @@ const metricImperialControls = {
       if (this.currentUnits === 'metric') {
         this.currentUnits = 'imperial';
         this.updateUnits();
+        this.displayMetricButton.classList.remove('active-units');
+        this.displayImperialButton.classList.add('active-units');
       }
     });
   },
