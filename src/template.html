@@ -84,11 +84,19 @@
       <button class="hourly-forecast-button">Hourly</button>
     </div>
     <div class="hours-display-controls">
-      <button class="change-displayed-hours" data-action="left">Left</button>
+      <div class="change-displayed-hours arrow" data-action="left">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="8.1 6 7.41 12" fill="#f5f5f5">
+          <path d="M15.422 16.594l-1.406 1.406-6-6 6-6 1.406 1.406-4.594 4.594z"></path>
+        </svg>
+      </div>
       <button class="change-displayed-hours" data-action="index" data-index="0"></button>
       <button class="change-displayed-hours" data-action="index" data-index="1"></button>
       <button class="change-displayed-hours" data-action="index" data-index="2"></button>
-      <button class="change-displayed-hours right" data-action="right">Right</button>
+      <div class="change-displayed-hours arrow" data-action="right">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="8.6 6 7.41 12" fill="#f5f5f5">
+          <path d="M8.578 16.594l4.594-4.594-4.594-4.594 1.406-1.406 6 6-6 6z"></path>
+        </svg>
+      </div>
     </div>
     <div class="bottom-display">
       <div class="daily-forecast-container active"></div>

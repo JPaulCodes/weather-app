@@ -336,10 +336,10 @@ const hoursDisplayControls = {
 
   // Uses index of clicked buttons to display the corresponding time block
   changeDisplayedHours(e) {
-    const { action } = e.target.dataset;
+    const { action } = e.currentTarget.dataset;
 
     if (action === 'index') {
-      this.index = Number(e.target.dataset.index);
+      this.index = Number(e.currentTarget.dataset.index);
     } else if (action === 'left' && this.index > 0) {
       this.index -= 1;
     } else if (action === 'right' && this.index < 2) {

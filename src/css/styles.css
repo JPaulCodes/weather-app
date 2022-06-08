@@ -167,6 +167,12 @@ main {
   column-gap: 10px;
 }
 
+.arrow {
+  cursor: pointer;
+  display: flex;
+  height: 20px;
+}
+
 [data-index] {
   width: 15px;
   height: 15px;
