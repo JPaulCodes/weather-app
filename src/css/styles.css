@@ -2,8 +2,9 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
 }
 
 body {
@@ -18,7 +19,7 @@ body {
 
 header {
   display: grid;
-  grid-template-columns: repeat(3, minmax(200px, 400px));
+  grid-template-columns: repeat(3, minmax(200px, 500px));
   justify-content: center;
 }
 
@@ -29,12 +30,50 @@ header {
 
 .search-form {
   place-self: center;
+  user-select: none;
+}
+
+.search-input {
+  min-width: 300px;
+  min-height: 40px;
+  color: white;
+  border-radius: 40px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 2px solid #4b5563;
+  padding: 0px 15px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.search-input::placeholder {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border: 2px solid white;
 }
 
 .display-units-controls {
   display: flex;
   align-items: center;
   justify-content: end;
+  column-gap: 10px;
+}
+
+.display-metric-button,
+.display-imperial-button {
+  min-width: 90px;
+  min-height: 40px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50px;
+  border: 2px solid #4b5563;
 }
 
 main {
@@ -45,7 +84,7 @@ main {
 }
 
 .city-name {
-  margin-top: 10px;
+  margin-top: 15px;
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -139,7 +178,7 @@ main {
   display: none;
   justify-content: space-between;
   text-align: center;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: auto;
 }
 
@@ -156,4 +195,20 @@ main {
 footer {
   background-color: #a1a1aa;
   min-height: 50px;
+}
+
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+input[type='search']::-ms-clear,
+input[type='search']::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
 }
