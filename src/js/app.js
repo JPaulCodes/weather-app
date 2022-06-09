@@ -301,13 +301,17 @@ const dailyHourlyControls = {
   },
 
   setDailyForecastActive() {
+    this.hourlyForecastButton.classList.remove('active-forecast');
     this.hourlyForecastContainer.classList.remove('active');
     this.hoursDisplayControls.classList.remove('active');
+    this.dailyForecastButton.classList.add('active-forecast');
     this.dailyForecastContainer.classList.add('active');
   },
 
   setHourlyForecastActive() {
+    this.dailyForecastButton.classList.remove('active-forecast');
     this.dailyForecastContainer.classList.remove('active');
+    this.hourlyForecastButton.classList.add('active-forecast');
     this.hourlyForecastContainer.classList.add('active');
     this.hoursDisplayControls.classList.add('active');
   },

@@ -192,6 +192,10 @@ main {
   font-size: 0.8rem;
 }
 
+.active-forecast {
+  border: 2px solid white;
+}
+
 .hours-display-controls {
   display: none;
   align-items: center;
