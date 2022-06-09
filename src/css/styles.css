@@ -265,6 +265,20 @@ main {
 footer {
   background-color: #a1a1aa;
   min-height: 50px;
+  display: flex;
+  justify-content: center;
+  column-gap: 10px;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  margin-top: 10px;
+  letter-spacing: 0.4px;
+}
+
+.github-icon {
+  width: 25px;
+  cursor: pointer;
 }
 
 input[type='search']::-webkit-search-decoration,
