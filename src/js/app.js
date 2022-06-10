@@ -1,5 +1,10 @@
 import { format, roundToNearestMinutes } from 'date-fns';
-import { weatherApi, getWindDescription, createElementFromHtml } from './utilities';
+import {
+  weatherApi,
+  getWindDescription,
+  createElementFromHTML,
+  getIcon,
+} from './utilities';
 
 // Handles fetching location specific weather data from OpenWeather
 const weatherForecast = (() => {
@@ -56,7 +61,8 @@ const cityTimeDisplay = {
     this.localTime.innerText = localTime;
   },
 
-  // Applies an offset to computer time to get UTC time, then converted to a locations local time
+  // Applies an offset to computer time to get UTC time, then converts UTC to a
+  // locations local time and formats it
   calculateLocalTime(unixTime, timezoneOffset) {
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const time = new Date((unixTime + timezoneOffset + utcOffset) * 1000);
@@ -97,13 +103,15 @@ const leftWeatherDisplay = {
     const windSpeed = weatherData.current.wind_speed;
     const windDescription = getWindDescription(windSpeed, this.units);
     const icon = getIcon(weatherData.current.weather[0].icon);
+    const temperature = Math.round(weatherData.current.temp);
+    const feelsLike = Math.round(weatherData.current.feels_like);
     const tempUnits = this.units === 'metric' ? '°C' : '°F';
 
     this.mainWeatherIcon.innerHTML = icon;
-    this.temperatureNow.innerText = `${Math.round(weatherData.current.temp)}${tempUnits}`;
     this.weatherNow.innerText = weatherData.current.weather[0].description;
-    this.feelsLike.innerText = `Feels Like ${Math.round(weatherData.current.feels_like)}${tempUnits}`;
     this.windNow.innerText = windDescription;
+    this.temperatureNow.innerText = `${temperature}${tempUnits}`;
+    this.feelsLike.innerText = `Feels Like ${feelsLike}${tempUnits}`;
   },
 
   async updateDisplay() {
@@ -112,7 +120,8 @@ const leftWeatherDisplay = {
   },
 };
 
-// Handles all other weather data which is shown on the right side of the main display
+// Handles all other weather data which is shown on the right side of the
+// main display
 const rightWeatherDisplay = {
   async init() {
     await this.getData();
@@ -143,11 +152,13 @@ const rightWeatherDisplay = {
     const timezoneOffset = weatherData.timezone_offset;
     const sunriseTime = this.getSunriseSunset(sunrise, timezoneOffset);
     const sunsetTime = this.getSunriseSunset(sunset, timezoneOffset);
+    const windSpeed = weatherData.current.wind_speed.toFixed(1);
+    const uvIndex = Math.round(weatherData.current.uvi);
     const speedUnits = this.units === 'metric' ? 'm/s' : 'mph';
 
-    this.windSpeed.innerText = `${weatherData.current.wind_speed.toFixed(1)}${speedUnits}`;
+    this.windSpeed.innerText = `${windSpeed}${speedUnits}`;
     this.humidity.innerText = `${weatherData.current.humidity}%`;
-    this.uvIndex.innerText = `${Math.round(weatherData.current.uvi)}`;
+    this.uvIndex.innerText = `${uvIndex}`;
     this.chanceOfRain.innerText = `${weatherData.daily[0].pop * 100}%`;
     this.visibility.innerText = `${weatherData.current.visibility}m`;
     this.cloudiness.innerText = `${weatherData.current.clouds}%`;
@@ -156,7 +167,8 @@ const rightWeatherDisplay = {
     this.pressure.innerText = `${weatherData.current.pressure}hPa`;
   },
 
-  // Applies an offset to computer time to get UTC time, then converted to a locations local time
+  // Applies an offset to computer time to get UTC time, then converts UTC to a
+  // locations local time and formats it
   getSunriseSunset(unixTime, timezoneOffset) {
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const time = new Date((unixTime + timezoneOffset + utcOffset) * 1000);
@@ -185,14 +197,15 @@ const dailyWeatherDisplay = {
   },
 
   cacheDom() {
-    this.dailyForecastContainer = document.querySelector('.daily-forecast-container');
+    this.dailyContainer = document.querySelector('.daily-forecast-container');
   },
 
   renderWeatherData() {
     const { weatherData } = this.data;
     const dailyData = weatherData.daily.slice(1, -1);
 
-    // Timezone offset needs to be applied to get correct dates and times for a location
+    // Timezone offset needs to be applied to get correct dates and times
+    // for a location
     const utcOffset = new Date().getTimezoneOffset() * 60;
     const timezoneOffset = weatherData.timezone_offset;
     const tempUnits = this.units === 'metric' ? '°C' : '°F';
@@ -200,29 +213,31 @@ const dailyWeatherDisplay = {
     dailyData.forEach((day) => {
       const date = new Date((day.dt + timezoneOffset + utcOffset) * 1000);
       const formattedDate = format(date, 'EEEE');
+      const maxTemp = Math.round(day.temp.max);
+      const minTemp = Math.round(day.temp.min);
       const icon = getIcon(day.weather[0].icon);
 
       const element = createElementFromHTML(`
         <div class="daily-weather">
           <div class="day">${formattedDate}</div>
-          <div class="highs">${Math.round(day.temp.max)}${tempUnits}</div>
-          <div class="lows">${Math.round(day.temp.min)}${tempUnits}</div>
+          <div class="highs">${maxTemp}${tempUnits}</div>
+          <div class="lows">${minTemp}${tempUnits}</div>
           <div class="daily-weather-icon">${icon}</div>
         </div>
       `);
 
-      this.dailyForecastContainer.appendChild(element);
+      this.dailyContainer.appendChild(element);
     });
   },
 
   async updateDisplay() {
     await this.getData();
-    this.dailyForecastContainer.replaceChildren();
+    this.dailyContainer.replaceChildren();
     this.renderWeatherData();
   },
 };
 
-// Handles the bottom display which shows weather forecast data by hour in 8hr blocks
+// Handles the bottom display which shows weather forecast data in 8hr blocks
 const hourlyWeatherDisplay = {
   async init() {
     await this.getData();
@@ -252,12 +267,13 @@ const hourlyWeatherDisplay = {
     hourlyData.forEach((hour) => {
       const time = new Date((hour.dt + timezoneOffset + utcOffset) * 1000);
       const formattedTime = format(time, 'h:mmaaa');
+      const temperature = Math.round(hour.temp);
       const icon = getIcon(hour.weather[0].icon);
 
       const element = createElementFromHTML(`
         <div class="hourly-weather">
           <div class="time">${formattedTime}</div>
-          <div class="hourly-temperature">${Math.round(hour.temp)}${tempUnits}</div>
+          <div class="hourly-temperature">${temperature}${tempUnits}</div>
           <div class="hourly-weather-icon">${icon}</div>
         </div>
       `);
@@ -295,8 +311,8 @@ const dailyHourlyControls = {
     this.dailyForecastButton = document.querySelector('.daily-forecast-button');
     this.hourlyForecastButton = document.querySelector('.hourly-forecast-button');
     this.hoursDisplayControls = document.querySelector('.hours-display-controls');
-    this.dailyForecastContainer = document.querySelector('.daily-forecast-container');
-    this.hourlyForecastContainer = document.querySelector('.hourly-forecast-container');
+    this.dailyContainer = document.querySelector('.daily-forecast-container');
+    this.hourlyContainer = document.querySelector('.hourly-forecast-container');
   },
 
   bindEvents() {
@@ -310,17 +326,17 @@ const dailyHourlyControls = {
 
   setDailyForecastActive() {
     this.hourlyForecastButton.classList.remove('active-forecast');
-    this.hourlyForecastContainer.classList.remove('active');
+    this.hourlyContainer.classList.remove('active');
     this.hoursDisplayControls.classList.remove('active');
     this.dailyForecastButton.classList.add('active-forecast');
-    this.dailyForecastContainer.classList.add('active');
+    this.dailyContainer.classList.add('active');
   },
 
   setHourlyForecastActive() {
     this.dailyForecastButton.classList.remove('active-forecast');
-    this.dailyForecastContainer.classList.remove('active');
+    this.dailyContainer.classList.remove('active');
     this.hourlyForecastButton.classList.add('active-forecast');
-    this.hourlyForecastContainer.classList.add('active');
+    this.hourlyContainer.classList.add('active');
     this.hoursDisplayControls.classList.add('active');
   },
 };
@@ -334,12 +350,12 @@ const hoursDisplayControls = {
   },
 
   cacheDom() {
-    this.hourlyForecastContainers = document.querySelectorAll('.hourly-forecast-container > *');
-    this.navigationButtons = document.querySelectorAll('.change-displayed-hours');
+    this.containers = document.querySelectorAll('.hourly-forecast-container > *');
+    this.navButtons = document.querySelectorAll('.change-displayed-hours');
   },
 
   bindEvents() {
-    this.navigationButtons.forEach((button) => {
+    this.navButtons.forEach((button) => {
       button.addEventListener('click', (e) => {
         this.changeDisplayedHours(e);
       });
@@ -361,18 +377,18 @@ const hoursDisplayControls = {
       this.index += 1;
     }
 
-    this.navigationButtons[this.index + 1].classList.add('active-container-dot');
-    this.hourlyForecastContainers[this.index].classList.add('active');
+    this.navButtons[this.index + 1].classList.add('active-container-dot');
+    this.containers[this.index].classList.add('active');
   },
 
   clearActiveDot() {
-    this.navigationButtons.forEach((button) => {
+    this.navButtons.forEach((button) => {
       button.classList.remove('active-container-dot');
     });
   },
 
   clearActiveContainer() {
-    this.hourlyForecastContainers.forEach((container) => {
+    this.containers.forEach((container) => {
       container.classList.remove('active');
     });
   },
