@@ -85,6 +85,7 @@ const leftWeatherDisplay = {
   },
 
   cacheDom() {
+    this.mainWeatherIcon = document.querySelector('.main-weather-icon');
     this.temperatureNow = document.querySelector('.temperature-now');
     this.weatherNow = document.querySelector('.weather-now');
     this.feelsLike = document.querySelector('.feels-like');
@@ -95,8 +96,10 @@ const leftWeatherDisplay = {
     const { weatherData } = this.data;
     const windSpeed = weatherData.current.wind_speed;
     const windDescription = getWindDescription(windSpeed, this.units);
+    const icon = getIcon(weatherData.current.weather[0].icon);
     const tempUnits = this.units === 'metric' ? '°C' : '°F';
 
+    this.mainWeatherIcon.innerHTML = icon;
     this.temperatureNow.innerText = `${Math.round(weatherData.current.temp)}${tempUnits}`;
     this.weatherNow.innerText = weatherData.current.weather[0].description;
     this.feelsLike.innerText = `Feels Like ${Math.round(weatherData.current.feels_like)}${tempUnits}`;
@@ -197,11 +200,14 @@ const dailyWeatherDisplay = {
     dailyData.forEach((day) => {
       const date = new Date((day.dt + timezoneOffset + utcOffset) * 1000);
       const formattedDate = format(date, 'EEEE');
-      const element = createElementFromHtml(`
+      const icon = getIcon(day.weather[0].icon);
+
+      const element = createElementFromHTML(`
         <div class="daily-weather">
           <div class="day">${formattedDate}</div>
           <div class="highs">${Math.round(day.temp.max)}${tempUnits}</div>
           <div class="lows">${Math.round(day.temp.min)}${tempUnits}</div>
+          <div class="daily-weather-icon">${icon}</div>
         </div>
       `);
 
@@ -246,11 +252,13 @@ const hourlyWeatherDisplay = {
     hourlyData.forEach((hour) => {
       const time = new Date((hour.dt + timezoneOffset + utcOffset) * 1000);
       const formattedTime = format(time, 'h:mmaaa');
-      const element = createElementFromHtml(`
+      const icon = getIcon(hour.weather[0].icon);
+
+      const element = createElementFromHTML(`
         <div class="hourly-weather">
           <div class="time">${formattedTime}</div>
           <div class="hourly-temperature">${Math.round(hour.temp)}${tempUnits}</div>
-          <div class="hourly-weather-icon">Icon</div>
+          <div class="hourly-weather-icon">${icon}</div>
         </div>
       `);
 

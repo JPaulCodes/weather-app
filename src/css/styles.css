@@ -29,7 +29,11 @@ header {
 .logo-container {
   display: flex;
   align-items: center;
-  column-gap: 5px;
+  column-gap: 10px;
+}
+
+.logo {
+  width: 40px;
 }
 
 .title-top {
@@ -142,7 +146,11 @@ main {
 .temperature-display {
   display: flex;
   align-items: center;
-  column-gap: 10px;
+  column-gap: 15px;
+}
+
+.main-weather-icon {
+  width: 80px;
 }
 
 .temperature-now {
@@ -151,7 +159,7 @@ main {
 
 .weather-now {
   text-transform: capitalize;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   margin-top: 10px;
 }
 
@@ -251,6 +259,17 @@ main {
   margin-bottom: 3px;
 }
 
+.daily-weather-icon,
+.hourly-weather-icon {
+  margin-top: 5px;
+}
+
+.daily-weather-icon svg,
+.hourly-weather-icon svg {
+  width: 35px;
+  height: 35px;
+}
+
 .day,
 .highs,
 .time,
@@ -267,7 +286,6 @@ main {
 }
 
 footer {
-  background-color: #a1a1aa;
   min-height: 50px;
   display: flex;
   justify-content: center;
@@ -276,7 +294,6 @@ footer {
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  margin-top: 10px;
   letter-spacing: 0.4px;
 }
 
