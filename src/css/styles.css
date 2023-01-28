@@ -215,6 +215,7 @@ main {
   cursor: pointer;
   display: flex;
   height: 20px;
+  width: 12px;
 }
 
 [data-index] {
